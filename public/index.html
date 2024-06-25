@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Polling and Chat App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="poll">
+    <h2>Create Poll</h2>
+    <form id="pollForm">
+      <label for="topic">Poll Topic:</label>
+      <input type="text" id="topic" name="topic" required>
+      <div id="dynamicOptions">
+        <label for="options">Options:</label>
+        <input type="text" name="options" placeholder="Enter Option" required>
+      </div>
+      <button type="button" onclick="addOption()">Add Option</button>
+      <button type="submit">Create Poll</button>
+      <div id="polls-container"></div>
+    </form>
+  </div>
+  <div id="chat">
+    <h2>Chat</h2>
+    <div id="messages"></div>
+    <div id="typing"></div>
+    <input id="message" type="text" placeholder="Type a message" oninput="typing()">
+    <button onclick="sendMessage()">Send</button>
+    <input type="file" id="fileInput">
+    <button onclick="sendFile()">Send File</button>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
