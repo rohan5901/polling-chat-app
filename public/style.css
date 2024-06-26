@@ -44,7 +44,7 @@ input[type="text"], input[type="file"] {
 }
 
 button {
-  background-color: #4CAF50;
+  background-color: #1e1e1e;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -54,7 +54,7 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #4b4a4a;
 }
 
 #messages {
@@ -86,13 +86,13 @@ button:hover {
 .poll-option button {
   width: 100%;
   text-align: left;
-  background-color: #1f1f20;
+  background-color: #1e1e1e;
   border: 1px solid #ddd;
   margin: 5px 0;
 }
 
 .poll-option button:hover {
-  background-color: #585858;
+  background-color: #4b4a4a;
 }
 
 .poll-option button:active {

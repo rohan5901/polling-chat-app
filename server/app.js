@@ -4,16 +4,20 @@ const { Server } = require('socket.io');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
+require('./mongoose')
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const { pollData, chatMessages, users } = require('./data');
+// wanted to add poll data to db bu
+const pollData = require('./pollData');
+
+const User=require('./model/user')
+const Message=require('./model/message')
 
 const uploadDir = path.resolve(__dirname, '../public/uploads');
 
-// Ensure uploads directory exists asynchronously
 fs.mkdir(uploadDir, { recursive: true })
   .catch(err => {
     if (err.code !== 'EEXIST') {
@@ -56,10 +60,39 @@ app.post('/upload', upload.single('file'), (req, res) => {
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('join', (username) => {
-    users[socket.id] = username;
-    io.emit('chat message', { user: 'System', message: `${username} has joined the chat` });
-    io.emit('new poll', pollData);
+  socket.on('join', async (username) => {
+    try {
+      // Ensure username is unique
+      let user = await User.findOne({ username });
+      if (!user) {
+        user = await User.create({ username });
+      }
+      socket.username = user.username;
+      io.emit('chat message', { user: 'System', message: `${user.username} has joined the chat` });
+      io.emit('new poll', pollData)
+    } catch (err) {
+      console.error('Error joining chat:', err);
+    }
+  });
+
+  socket.on('chat message', async (msg) => {
+    try {
+      const message = new Message({ message: msg, user: socket.username });
+      await message.save();
+      io.emit('chat message', message);
+    } catch (err) {
+      console.error('Error sending message:', err);
+    }
+  });
+
+  socket.on('typing', () => {
+    socket.broadcast.emit('typing', socket.username);
+  });
+
+  socket.on('disconnect', () => {
+    if (socket.username) {
+      io.emit('chat message', { user: 'System', message: `${socket.username} has left the chat` });
+    }
   });
 
   socket.on('vote', ({ topic, option }) => {
@@ -69,23 +102,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('chat message', (msg) => {
-    const message = { user: users[socket.id], message: msg };
-    chatMessages.push(message);
-    io.emit('chat message', message);
-  });
-
-  socket.on('typing', () => {
-    socket.broadcast.emit('typing', users[socket.id]);
-  });
-
-  socket.on('disconnect', () => {
-    const disconnectedUser = users[socket.id];
-    if (disconnectedUser) {
-      io.emit('chat message', { user: 'System', message: `${disconnectedUser} has left the chat` });
-      delete users[socket.id];
-    }
-  });
 
   socket.on('create poll', ({ topic, options }) => {
     if (!pollData[topic]) {

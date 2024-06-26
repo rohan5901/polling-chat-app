@@ -1,6 +1,5 @@
 const socket = io();
 
-// Function to prompt for username and join chat
 async function promptUsername() {
   const username = prompt("Enter your username:");
   if (username) {
@@ -11,7 +10,6 @@ async function promptUsername() {
   }
 }
 
-// Function to send chat message
 function sendMessage() {
   const messageInput = document.getElementById('message');
   const message = messageInput.value.trim();
@@ -21,7 +19,7 @@ function sendMessage() {
   }
 }
 
-// Function to send file
+// extra file sharing functionality
 async function sendFile() {
   const fileInput = document.getElementById('fileInput');
   const file = fileInput.files[0];
@@ -52,12 +50,10 @@ async function sendFile() {
   }
 }
 
-// Function to indicate typing status
 function typing() {
   socket.emit('typing');
 }
 
-// Function to add poll option input
 function addOption() {
   const dynamicOptionsDiv = document.getElementById('dynamicOptions');
   const newOptionInput = document.createElement('input');
@@ -67,7 +63,8 @@ function addOption() {
   dynamicOptionsDiv.appendChild(newOptionInput);
 }
 
-// Function to submit new poll
+// since asked to enable voters on various poll's I added the feature to allow users to create a new poll and vote for them
+// intended feature allowed user to vote only for 1 option per poll, but time constraint 🥲
 function submitPoll(event) {
   event.preventDefault();
   const topic = document.getElementById('topic').value.trim();
@@ -82,10 +79,9 @@ function submitPoll(event) {
   }
 }
 
-// Function to render poll data
 function renderPollData(pollData) {
   const container = document.getElementById('polls-container');
-  container.innerHTML = ''; // Clear the container
+  container.innerHTML = '';
 
   for (const topic in pollData) {
     if (pollData.hasOwnProperty(topic)) {
@@ -118,20 +114,16 @@ function renderPollData(pollData) {
     }
   }
 
-  // Scroll to the bottom of the container
   container.scrollTop = container.scrollHeight;
 }
 
-// Function to vote
 function vote(pollUpdate) {
   socket.emit('vote', pollUpdate);
 }
 
-// Function to initialize the application
 async function init() {
   await promptUsername();
 
-  // Load poll data from server
   try {
     const response = await fetch('/pollData');
     const pollData = await response.json();
@@ -140,7 +132,6 @@ async function init() {
     console.error('Error loading poll data:', error);
   }
 
-  // Event listeners
   document.getElementById('pollForm').addEventListener('submit', submitPoll);
 
   socket.on('poll update', renderPollData);
@@ -150,7 +141,6 @@ async function init() {
   socket.on('typing', displayTypingStatus);
 }
 
-// Function to display chat message
 function displayChatMessage(msg) {
   const messagesDiv = document.getElementById('messages');
   const messageElement = document.createElement('p');
@@ -159,7 +149,6 @@ function displayChatMessage(msg) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// Function to display file message
 function displayFileMessage(msg) {
   const messagesDiv = document.getElementById('messages');
   const fileElement = document.createElement('p');
@@ -168,12 +157,10 @@ function displayFileMessage(msg) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// Function to display typing status
 function displayTypingStatus(username) {
   const typingDiv = document.getElementById('typing');
   typingDiv.innerText = `${username} is typing...`;
   setTimeout(() => { typingDiv.innerText = ''; }, 1000);
 }
 
-// Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
