@@ -1,0 +1,52 @@
+Report ---------->
+
+I have implemented all the essential features mentioned in the document, excluding the bonus challenge. I attempted to complete the bonus challenges, but due to time constraints, could not finish them.
+
+I have added two features to improve the user experience:
+- Users can create polls with variable options.
+- Users can share files.
+
+Both of these features enhance the overall application.
+
+Thought Process While Building the Application
+
+1. Create a socket connection.
+2. Create input fields and emit events when submitted.
+3. Listen for new messages and broadcast them.
+4. Since creating a new poll is similar to sending a message, I added this feature.
+5. Casting a vote is also similar to sending a message.
+6. Users should be able to share files, so I used Multer.
+
+Completed Features
+
+- Display the poll options, their current vote counts, and the chat interface.
+- Implement user interface elements for voting, sending chat messages, and displaying chat history.
+- Enable users to vote on various topics or options.
+- Implement a real-time update mechanism for poll results, notifying all connected users.
+- Utilize broadcasting to ensure all users receive updated poll data.
+- Integrate a real-time chat feature alongside the polling interface.
+- Typing indicator (shows a dot animation when a user is typing).
+- Allow users to send and receive chat messages in real-time.
+- Ensure that chat messages are visible to all connected users.
+- Maintain data structures on the server to store poll options, chat messages, and user information.
+- Update poll data and store chat messages as users interact.
+- Develop a basic user authentication system to uniquely identify users.
+- Associate usernames with chat messages.
+
+Unfinished Work
+
+- Users should be able to vote only once per poll.
+- Duplicate poll topics are currently overridden; this needs handling.
+- Store user, message, and poll data in a database.
+- Allow users to edit or delete their chat messages.
+- Implement persistent user profiles and message history.
+- File storage is not encrypted.
+- Frontend design revamp: collapsible polls, separate poll creation section.
+
+Solutions in Mind for Unfinished Work
+
+- Implement storing data in a database, which would enable users to edit and delete messages based on messageId, ensuring that only the user associated with the message can update it.
+- Keep track of which user has already cast a vote for each poll, and accept/reject votes based on this.
+- Eliminate duplicate poll topics by associating them with an ID and checking if a poll with a similar topic exists.
+- Use libraries to encrypt stored files.
+- Store room messages in a separate entity and render them when the user logs in again.
